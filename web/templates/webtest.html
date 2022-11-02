@@ -1,36 +1,49 @@
 <!DOCTYPE html>
-<html>
-<head>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>캡스톤Web_DEMO</title>
-</head>
-<body>
-    <div id="page-wrapper"> <!--공간분할-->
-        <header id="main-header">
-            <hgroup>
-                <h1 class="master-title">캡스톤Wed_DEMO</h1>
-                <h2 class="master-description">By songryu</h2>
-            </hgroup>
-        </header>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
+    <title>WEB_DEMO</title>
 
-        <nav id="main-navigation"></nav>
-        <div class="pull-left">
-            <ul class="outer-menu">
-                <li class="outer-menu-item"><span class="menu-title">WEB</span>
+    <!-- 부트스트랩 css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
-
-                </li>
-            </ul>
-        </div>
-
-        <div id="content">
-            <section id="main-section"></section>
-            <aside id="main-aside"></aside>
-        </div>
-
-        <footer id="main-footer"></footer>
-    </div>
-
-    <hi>first</hi>
-</body>
+    <!-- IE8 에서 HTML5 요소와 미디어 쿼리를 위한 HTML5 shim 와 Respond.js -->
+    <!-- WARNING: Respond.js 는 당신이 file:// 을 통해 페이지를 볼 때는 동작하지 않습니다. -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+      .title{
+        color:cornflowerblue;
+      }
+      body{
+        background-color: #bfb8f1;
+      }
+    </style>
+  </head>
+  <body>
+    <div>...</div>
+    <p>...</p>
+    <h1 class="'title">제목</h1>
+    <h2>소제목</h2>    <!--h3~6-->
+    <a href="https://www.gwp.or.kr/wus/cmmn/lgn/login.jdo"> 공무원 복지 포탈 </a>
+    <img src="https://s3.ap-northeast-2.amazonaws.com/materials.spartacodingclub.kr/free/logo_teamsparta.png" width="300"/>  
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ modelform }}
+        <input type="file" name="file" id="file" value='파일추가'>
+        <button type="submit" name='file' value='전송'>data upload</button>
+        <!--  <a id="id_uploaded_file" href="{ uploadFileModel.file.url }" download>Download</a>-->
+      </form>
+    <h1>WEB_DEMO
+    <</h1>
+    <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <!-- 모든 컴파일된 플러그인을 포함합니다 (아래), 원하지 않는다면 필요한 각각의 파일을 포함하세요 -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
 </html>
