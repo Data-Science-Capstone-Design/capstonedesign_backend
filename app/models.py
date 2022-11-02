@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE,db_column='user')
+    cash = models.IntegerField(default=0,blank=True,null=True)
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

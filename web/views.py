@@ -1,14 +1,14 @@
 #from msilib.schema import Billboard
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from .forms import UploadFileForm
-
+from .models import *
 # Imaginary function to handle an uploaded file.
 from .forms import handle_uploaded_file
 # 엑셀을 생성 및 행 추가 (여기서는 행 단위 추가만 함 열만 추가하는건 검색 바람 )
-from openpyxl import Workbook # 엑셀을 만드는 api (엑셀 미설치 시에도 동작)
-from io import BytesIO # 엑셀 파일을 전송 할 수 있도록 바이트 배열로 변환
+# from openpyxl import Workbook # 엑셀을 만드는 api (엑셀 미설치 시에도 동작)
+# from io import BytesIO # 엑셀 파일을 전송 할 수 있도록 바이트 배열로 변환
 
 """
 from django.shortcuts import render,redirect
@@ -52,7 +52,23 @@ def upload_file(request):
 
     return render(request, 'webtest.html', {'form': form})
 
+def make_coupon_page(request):
+    return render(request,'make_coupon.html')
 
+def make_coupon(request): # 겹치는거 기능 추가해야함
+    
+    pin_num = request.POST["pin_num"]
+    price = request.POST["price"]
+
+    Pin.objects.create(
+        pin_num=pin_num,
+        price=price
+    )
+
+    return redirect('web:main')
+
+def main(request):
+    return render(request,'main.html')
 
 # wb = Workbook()  # 엑셀 생성
 # ws = wb.active	# 엑셀 활성화
