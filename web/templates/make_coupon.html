@@ -1,6 +1,6 @@
 <form method="POST" action="{%url 'web:make_coupon'%}" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="text" name="pin_num" id="pin_num" placeholder='핀 번호 입력하세요' required>
-    <input type="number" name="price" id="price" value='가격 입력하세요' required>
-    <button type="submit" value='핀 등록'>핀 등록</button>
+    <input type="text" name="coupon_num" id="coupon_num" placeholder='쿠폰 번호 입력하세요' required><br>
+    <input type="number" name="price" id="price" placeholder='가격 입력하세요' required><br>
+    <button type="submit" value='쿠폰 등록'>쿠폰 등록</button>
   </form>

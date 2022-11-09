@@ -1,54 +1,64 @@
 from django.shortcuts import render
 from rest_framework.response import Response
+
 from rest_framework.decorators import api_view
 from rest_framework import status 
-from django.contrib.auth.models import User
 import json
 from web.models import *
 from django.contrib.auth import authenticate,logout,login
-
+from .serializers import *
+import logging as logger
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny,IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
+import logging
 # Create your views here.
 
 def test(request):
     return render(request,'test.html')
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def signup(request):
     body=json.loads(request.body)
-    print(body)
-    user=User.objects.create_user(
-        username=body['username'],
-        password=body['password']
-    )
-    return Response(status=status.HTTP_201_CREATED)
 
-@api_view(['POST'])
-def login(request): #로그인 수정 필요
+    userserializer=UserSerializer(data=body)
+
+    if userserializer.is_valid(raise_exception=True):
+        token=userserializer.save()
+    return Response(token,status=status.HTTP_201_CREATED)
+
+@api_view(['PUT'])
+def update_profile(request):
     body=json.loads(request.body)
     
-    user = authenticate(username=body['username'],password=body['password'])
-    if user is not None:
-        login(request,user)
-        return Response(status=status.HTTP_200_OK)
-    else:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    profileserializer=ProfileSerializer(request.user.profile,data=body)
 
+    if profileserializer.is_valid(raise_exception=True):
+        profile=profileserializer.save()
+    return Response(status=status.HTTP_201_CREATED)
+    
 
 @api_view(['PUT'])
 def coupon_registration(request):
     body=json.loads(request.body)
 
-    pin=Pin.objects.filter(pin_num=body['pin_num'])
-    print(pin)
-    if pin.exists():
-        print('hi')
-        request.user.profile.cash+=pin.first().price
-        request.user.profile.save()
-        pin.price=0
-        pin.save()
-    
+    coupon=Coupon.objects.filter(coupon_num=body['coupon_num'])
+    if coupon.exists():
+        coupon=coupon.first()
+        if coupon.use==False:
+            request.user.profile.cash+=coupon.price
+            request.user.profile.save()
+            coupon.price=0
+            coupon.use=True
+            coupon.save()
+        else:
+            logging.info("이미 사용한 쿠폰")
+            return Response(status=status.HTTP_403_FORBIDDEN)
+            
     return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def get_my_cash(request):
-    return Response({'cash':request.user.profile.cash},status=status.HTTP_200_OK)
+    cash_info=UserCashSerializer(request.user.profile).data
+    return Response(cash_info,status=status.HTTP_200_OK)

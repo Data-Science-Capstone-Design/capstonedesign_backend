@@ -4,12 +4,16 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render,redirect
 from .forms import UploadFileForm
 from .models import *
+from django.contrib.auth import authenticate,logout,login
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+
 # Imaginary function to handle an uploaded file.
 from .forms import handle_uploaded_file
 # 엑셀을 생성 및 행 추가 (여기서는 행 단위 추가만 함 열만 추가하는건 검색 바람 )
 # from openpyxl import Workbook # 엑셀을 만드는 api (엑셀 미설치 시에도 동작)
 # from io import BytesIO # 엑셀 파일을 전송 할 수 있도록 바이트 배열로 변환
-
+User=get_user_model()
 """
 from django.shortcuts import render,redirect
 from .models import Document
@@ -52,23 +56,6 @@ def upload_file(request):
 
     return render(request, 'webtest.html', {'form': form})
 
-def make_coupon_page(request):
-    return render(request,'make_coupon.html')
-
-def make_coupon(request): # 겹치는거 기능 추가해야함
-    
-    pin_num = request.POST["pin_num"]
-    price = request.POST["price"]
-
-    Pin.objects.create(
-        pin_num=pin_num,
-        price=price
-    )
-
-    return redirect('web:main')
-
-def main(request):
-    return render(request,'main.html')
 
 # wb = Workbook()  # 엑셀 생성
 # ws = wb.active	# 엑셀 활성화
@@ -84,3 +71,54 @@ def main(request):
 
 # wb.close()  #엑셀 닫기
 # wb.save(excelfile) # 바이트배열로 저장 (mail 전송 하려면 바이트형태로 변환 되어야 함)
+
+def make_coupon_page(request):
+    return render(request,'make_coupon.html')
+
+def make_coupon(request): # 겹치는거 기능 추가해야함
+    
+    coupon_num = request.POST["coupon_num"]
+    price = request.POST["price"]
+
+    Coupon.objects.create(
+        coupon_num=coupon_num,
+        price=price
+    )
+
+    return redirect('web:main')
+
+def main(request):
+    return render(request,'main.html')
+
+def show_coupons(request):
+    coupons=Coupon.objects.all()
+    return render(request,'coupon_list.html',{"coupons":coupons})
+
+
+def signuppage(request):
+    return render(request,'accounts/signup.html')
+
+def signup(request):
+    user=User.objects.create_user(
+        id=request.POST['id'],
+        password=request.POST['password'],
+        job=request.POST['job']
+    )
+    login(request,user)
+    return redirect('web:main')
+
+def loginpage(request):
+    return render(request,'accounts/login.html')
+
+def login_view(request):
+    user=authenticate(id=request.POST['id'],password=request.POST['password'])
+    if user is not None:
+        login(request,user)
+        return redirect('web:main')
+    else:
+        messages.warning(request, "비밀번호가 틀렸거나 회원이 아닙니다.")
+        return redirect('web:main')
+
+def logout_view(request):
+    logout(request)
+    return redirect('web:main')
