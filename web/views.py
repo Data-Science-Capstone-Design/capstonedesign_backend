@@ -1,9 +1,13 @@
 #from msilib.schema import Billboard
-"""
 from django.shortcuts import render,redirect
 from .models import Document
-from .forms import PostForm
+from .forms import PostForm,UploadFileForm,handle_uploaded_file
+from django.http import HttpResponse,HttpResponseRedirect 
+from .models import Candidate
+import csv
+import pandas as pd
 
+"""
 # Create your views here.
 def test(request):
     if request.method=='GET': 
@@ -23,12 +27,6 @@ def read(requests,bid):
     return render(requests,'web/list.html',{'post':post})
 """
 
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from .forms import UploadFileForm
-
-# Imaginary function to handle an uploaded file.
-from .forms import handle_uploaded_file
 
 def upload_file(request):
     if request.method == 'POST':
@@ -43,7 +41,22 @@ def upload_file(request):
     else:
         form = UploadFileForm()
 
-    return render(request, 'webtest.html', {'form': form})
+    return render(request, 'templatemo_555_upright/.html', {'form': form})
+def main(request):
+    return render(request, 'html/index.html')
+"""
+def csvTomodel(request):
+    path='/Users/songryu/Desktop/capstonedesign_backend/web/media/files/data.xlsx'
+    file=open(path)
+    reader=csv.reader(file)
+    print('----',reader)
+    list=[]
+    for row in reader:
+        list.append(seops(a=row[0],
+                          b=row[1],
+                          c=row[2]))
+    seops.objects.bulk_create(list)                    
+    return HttpResponse('create model --')
 
 
 # 엑셀을 생성 및 행 추가 (여기서는 행 단위 추가만 함 열만 추가하는건 검색 바람 )
@@ -64,3 +77,16 @@ for i in text: # text 는 db 에 저장된 내용 전체
 
 wb.close()  #엑셀 닫기
 wb.save(excelfile) # 바이트배열로 저장 (mail 전송 하려면 바이트형태로 변환 되어야 함)
+"""
+def main_view(request):
+    with open('web/media/files/data.xlsx','r') as f:
+        dr = csv.DictReader(f)
+        s = pd.DataFrame(dr)
+    ss = []
+    for i in range(len(s)):
+        st = (s['이름'][i], s['나이'][i], s['주소'][i])
+        ss.append(st)
+    for i in range(len(s)):
+        Candidate.objects.create(name=ss[i][0], code=ss[i][1], ipo_date=ss[i][2])
+        context={'df':s.to_html(justify='center')}
+        return render(request,'classes.html',context)
