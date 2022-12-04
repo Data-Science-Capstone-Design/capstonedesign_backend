@@ -467,7 +467,7 @@ button {
 }
 .live_text {
     width: 100%;
-    float: left;
+    float: right;
     font-size: 32px;
     color: #020907;
     font-weight: bold;
@@ -500,7 +500,6 @@ button {
     color: #ffffff;
     background-color: #2e3192;
     text-align: center;
-    padding: 10px 0px;
     border-radius: 0px;
 }
 .read_bt1 a:hover{
@@ -678,9 +677,8 @@ button {
     width: 100%;
     float: left;
     background-image: url(../images/success-bg.png);
-    height: auto;
-    padding-bottom: 67px;
-    background-size: 100%;
+    padding-bottom: 1px;
+    background-size: 10%;
     background-repeat: no-repeat;
 }
 .our_text {
@@ -924,8 +922,153 @@ button {
 }
 
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
 
+:root {
+  --button-color: #ffffff;
+  --button-bg-color: #0d6efd;
+  --button-hover-bg-color: #025ce2;
+}
 
+button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  
+  background: var(--button-bg-color);
+  color: var(--button-color);
+  
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+  text-decoration: none;
+  
+  border: none;
+  border-radius: 4px;
+  
+  display: inline-block;
+  
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  cursor: pointer;
+  
+  transition: 0.5s;
+}
+
+button.success {
+  --button-bg-color: #28a745;
+  --button-hover-bg-color: #218838;
+
+}
+
+button:active,
+button:hover,
+button:focus {
+  background: var(--button-hover-bg-color);
+  outline: 100;
+  
+}
+button:disabled {
+  opacity: 0.5;
+}
+
+form {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+body {
+  margin: 0;
+  background: #eee;
+}
+.styled-table body {
+    padding:1.5em;
+    background: #f5f5f5
+  }
+  
+  .styled-table  table {
+    border: 1px #a39485 solid;
+    font-size: .9em;
+    box-shadow: 0 2px 5px rgba(0,0,0,.25);
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .styled-table th {
+    text-align: left;
+  }
+    
+  .styled-table  thead {
+    font-weight: bold;
+    color: #fff;
+    background: #73685d;
+  }
+    
+  .styled-table  td, th {
+    padding: 1em .5em;
+    vertical-align: middle;
+  }
+    
+  .styled-table  td {
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    background: #fff;
+    height: 50%;
+  }
+  
+  .styled-table a {
+    color: #73685d;
+  }
+    
+  .styled-table tbody {
+    height: 50%;
+  }
+   @media all and (max-width: 768px) {
+      
+    table, thead, tbody, th, td, tr {
+      display: block;
+    }
+    
+    th {
+      text-align: right;
+    }
+    
+    table {
+      position: relative; 
+      padding-bottom: 0;
+      border: none;
+      box-shadow: 0 0 10px rgba(0,0,0,.2);
+    }
+    
+    thead {
+      float: left;
+      white-space: nowrap;
+    }
+    
+    tbody {
+      overflow-x: auto;
+      overflow-y: hidden;
+      position: relative;
+      white-space: nowrap;
+    }
+    
+    tr {
+      display: inline-block;
+      vertical-align: top;
+    }
+    
+    th {
+      border-bottom: 1px solid #a39485;
+    }
+    
+    td {
+      border-bottom: 1px solid #e5e5e5;
+    }
+    
+    
+    }
 
 
 
