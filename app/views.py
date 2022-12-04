@@ -14,9 +14,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 import logging
 # Create your views here.
 
-def test(request):
-    return render(request,'test.html')
-
+#------------- 회원가입 --------------
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
@@ -28,6 +26,7 @@ def signup(request):
         token=userserializer.save()
     return Response(token,status=status.HTTP_201_CREATED)
 
+#------------- 프로필 업데이트 --------------
 @api_view(['PUT'])
 def update_profile(request):
     body=json.loads(request.body)
@@ -39,10 +38,11 @@ def update_profile(request):
     return Response(status=status.HTTP_201_CREATED)
     
 
+#------------- 쿠폰 등록 --------------
 @api_view(['PUT'])
 def coupon_registration(request):
     body=json.loads(request.body)
-
+    result={}
     coupon=Coupon.objects.filter(coupon_num=body['coupon_num'])
     if coupon.exists():
         coupon=coupon.first()
@@ -52,12 +52,15 @@ def coupon_registration(request):
             coupon.price=0
             coupon.use=True
             coupon.save()
+            result['coupon']=coupon.price
+            result['user_cash']=request.user.profile.cash
         else:
             logging.info("이미 사용한 쿠폰")
             return Response(status=status.HTTP_403_FORBIDDEN)
             
-    return Response(status=status.HTTP_201_CREATED)
+    return Response(result,status=status.HTTP_201_CREATED)
 
+#-------------  내 잔액 --------------
 @api_view(['GET'])
 def get_my_cash(request):
     cash_info=UserCashSerializer(request.user.profile).data

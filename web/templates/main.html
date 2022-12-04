@@ -12,5 +12,20 @@
     {% else %}
         <a href="{% url 'web:signuppage' %}">회원가입 페이지</a>
         <a href="{% url 'web:loginpage' %}">로그인 페이지</a>
+
+        
+        <form action="{% url 'web:excel_save' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file"
+                   title="Upload excel file"
+                   name="excel_file"
+                   style="border: 1px solid black; padding: 5px;"
+                   required="required">
+            <p>
+            <input type="submit"
+                   value="Upload"
+                   style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
+        </form>
+
     {% endif%}
 {% endif %}

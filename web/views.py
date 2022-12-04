@@ -7,38 +7,16 @@ from .models import *
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth import get_user_model
 from django.contrib import messages
-
+# from django.core.mail import EmailMessage
+# from django.template.loader import render_to_string
+import pandas as pd
+import os
 # Imaginary function to handle an uploaded file.
 from .forms import handle_uploaded_file
 # 엑셀을 생성 및 행 추가 (여기서는 행 단위 추가만 함 열만 추가하는건 검색 바람 )
 # from openpyxl import Workbook # 엑셀을 만드는 api (엑셀 미설치 시에도 동작)
 # from io import BytesIO # 엑셀 파일을 전송 할 수 있도록 바이트 배열로 변환
 User=get_user_model()
-"""
-from django.shortcuts import render,redirect
-from .models import Document
-from .forms import PostForm
-
-# Create your views here.
-def test(request):
-    
-    return render(request,'webtest.html')
-    if request.method=='GET': 
-        modelform=PostForm()
-        return render(request,'webtest.html',{'modelform':modelform}) #postform을 변수에 담아서 webtest.html 을 렌더링
-#템플릿 불러오기 
-    elif request.method=='POST':
-        modelform=PostForm(request.POST) #입력된 내용들 변수에 저장
-        if modelform.is_valid(): #form 이 유효하면 
-            post=modelform.save(commit=False) #데이터가져옴
-            post.files=request.FILES('file')
-            post.save() #DB에 저장
-            return redirect('webtest.html'+str(post.id)) #URL로 이동
-
-def read(requests,bid):
-    post=Document.objects.prefetch_related('post_set').get(id=bid)
-    return render(requests,'web/list.html',{'post':post})
-"""
 
 
 def upload_file(request):
@@ -57,24 +35,27 @@ def upload_file(request):
     return render(request, 'webtest.html', {'form': form})
 
 
-# wb = Workbook()  # 엑셀 생성
-# ws = wb.active	# 엑셀 활성화
-# excelfile = BytesIO() #바이트 배열 생성
+def excel_save(request):
+    excel=request.FILES.get('excel_file')
+    print(request.POST)
+    print(excel)
+    filename,fileExtension=os.path.splitext(str(excel))
+    print(filename)
+    print(fileExtension)
+    if fileExtension == '.xlsx':
+        df=pd.read_excel(excel)
+        
+        print(df)
+    else:
+        messages.warning(request, "확장자가 xlsx가 아닙니다")
 
-# ws['A1']= 'company' # 엑셀 a1 열 이름 정하기
-# ws['B1']= 'product'
-# ws['C1']= 'count'
+    return redirect('web:main')
 
-# for i in text: # text 는 db 에 저장된 내용 전체
-#   content=[i.company,i.product_name,i.count]   #리스트 형태로 1 행씩 생성(a1, b1, c1) 에 각각
-#   ws.append(content) # 엑셀에 1행을 추가
-
-# wb.close()  #엑셀 닫기
-# wb.save(excelfile) # 바이트배열로 저장 (mail 전송 하려면 바이트형태로 변환 되어야 함)
-
+#------------- 쿠폰 생성페이지 --------------
 def make_coupon_page(request):
     return render(request,'make_coupon.html')
 
+#------------- 쿠폰 생성 --------------
 def make_coupon(request): # 겹치는거 기능 추가해야함
     
     coupon_num = request.POST["coupon_num"]
@@ -87,26 +68,32 @@ def make_coupon(request): # 겹치는거 기능 추가해야함
 
     return redirect('web:main')
 
+#------------- 메인 페이지 --------------
 def main(request):
     return render(request,'main.html')
 
+#------------- 쿠폰 열람 페이지 --------------
 def show_coupons(request):
     coupons=Coupon.objects.all()
     return render(request,'coupon_list.html',{"coupons":coupons})
 
 
+#------------- 회원가입 페이지 --------------
 def signuppage(request):
     return render(request,'accounts/signup.html')
 
+#------------- 회원가입 --------------
 def signup(request):
     user=User.objects.create_user(
         id=request.POST['id'],
         password=request.POST['password'],
-        job=request.POST['job']
     )
+    user.profile.job=request.POST['job']
+    user.profile.save()
     login(request,user)
     return redirect('web:main')
 
+#------------- 로그인 페이지 --------------
 def loginpage(request):
     return render(request,'accounts/login.html')
 
@@ -119,6 +106,12 @@ def login_view(request):
         messages.warning(request, "비밀번호가 틀렸거나 회원이 아닙니다.")
         return redirect('web:main')
 
+#------------- 로그아웃 --------------
 def logout_view(request):
     logout(request)
     return redirect('web:main')
+
+# # ----------- 메일 전송 --------------
+# def mail_send(reqeust):
+#     mail_subject='지원금 수령자로 선정되셨습니다' #메일 제목
+#     message=render_to_string('smtp_email.html')
