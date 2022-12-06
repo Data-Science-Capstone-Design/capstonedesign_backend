@@ -12,6 +12,8 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 import logging
+from django.utils import timezone
+
 # Create your views here.
 
 #------------- 회원가입 --------------
@@ -31,29 +33,29 @@ def signup(request):
 def update_profile(request):
     body=json.loads(request.body)
     
-    profileserializer=ProfileSerializer(request.user.profile,data=body)
+    userserializer=UserSerializer(request.user,data=body)
 
-    if profileserializer.is_valid(raise_exception=True):
-        profile=profileserializer.save()
-    return Response(status=status.HTTP_201_CREATED)
+    if userserializer.is_valid(raise_exception=True):
+        token=userserializer.save()
+    return Response(token,status=status.HTTP_201_CREATED)
     
 
-#------------- 쿠폰 등록 --------------
+#------------- 바우처 등록 --------------
 @api_view(['PUT'])
-def coupon_registration(request):
+def voucher_registration(request):
     body=json.loads(request.body)
     result={}
-    coupon=Coupon.objects.filter(coupon_num=body['coupon_num'])
-    if coupon.exists():
-        coupon=coupon.first()
-        if coupon.use==False:
-            request.user.profile.cash+=coupon.price
-            request.user.profile.save()
-            coupon.price=0
-            coupon.use=True
-            coupon.save()
-            result['coupon']=coupon.price
-            result['user_cash']=request.user.profile.cash
+    voucher=Voucher.objects.filter(pin_num=body['pin_num'])
+    if voucher.exists():
+        voucher=voucher.first()
+        if voucher.use is None:
+            request.user.cash+=voucher.price
+            request.user.save()
+            # voucher.price=0
+            voucher.use=timezone.now()
+            voucher.save()
+            result['voucher']=voucher.price
+            result['user_cash']=request.user.cash
         else:
             logging.info("이미 사용한 쿠폰")
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -62,6 +64,10 @@ def coupon_registration(request):
 
 #-------------  내 잔액 --------------
 @api_view(['GET'])
-def get_my_cash(request):
-    cash_info=UserCashSerializer(request.user.profile).data
-    return Response(cash_info,status=status.HTTP_200_OK)
+def info_and_balance(request):
+    return Response({"balance":request.user.cash,"user":request.user.id},status=status.HTTP_200_OK)
+# #-------- 결제자 정보 확인 -------
+# @api_view(['GET'])
+# def check_who(request,id):
+#     who=User.objects.get(id=id)
+#     return Response({"balance":request.user.cash,"user":request.user.id},status=status.HTTP_200_OK)

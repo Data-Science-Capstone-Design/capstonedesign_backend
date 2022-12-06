@@ -1,8 +1,5 @@
-#from msilib.schema import Billboard
-
-from django.http import HttpResponseRedirect
 from django.shortcuts import render,redirect
-from .forms import UploadFileForm
+# from .forms import UploadFileForm
 from .models import *
 from django.contrib.auth import authenticate,logout,login
 from django.contrib.auth import get_user_model
@@ -11,37 +8,17 @@ from django.contrib import messages
 # from django.template.loader import render_to_string
 import pandas as pd
 import os
-# Imaginary function to handle an uploaded file.
-from .forms import handle_uploaded_file
-# 엑셀을 생성 및 행 추가 (여기서는 행 단위 추가만 함 열만 추가하는건 검색 바람 )
-# from openpyxl import Workbook # 엑셀을 만드는 api (엑셀 미설치 시에도 동작)
-# from io import BytesIO # 엑셀 파일을 전송 할 수 있도록 바이트 배열로 변환
+from django.utils import timezone
+
+
 User=get_user_model()
-
-
-def upload_file(request):
-    if request.method == 'POST':
-       
-        form = UploadFileForm(request.POST, request.FILES)
-        # print(request.FILES)
-        print(request.FILES.get('file'))
-        # print(request.POST)
-        print(form)
-        if form.is_valid():
-            print('form')
-          
-            handle_uploaded_file(request.FILES)
-            return redirect('web:about')
-
-    else:
-        form = UploadFileForm()
-
-    # return render(request, 'templatemo_555_upright/.html', {'form': form})
-    return redirect('web:about')
-
 
 def main(request):
     data_list=[]
+    excel_inst=Excel_data.objects.filter(main=True)
+    if excel_inst.exists():
+        excel_inst=excel_inst.first()
+        data_list=excel_inst
     return render(request, 'html/index.html',{'data_list':data_list})
 
 def excel_save(request):
@@ -52,8 +29,17 @@ def excel_save(request):
     print(filename)
     print(fileExtension)
     if fileExtension == '.xlsx':
+        group=timezone.now().strftime('%Y/%m/%d - %H:%M:%S')
         df=pd.read_excel(excel)
-        
+        for i in df:
+            print(i)
+            Excel_data.objects.create(
+                group=group,
+                username=i['이름'],
+                birth=i['생년월일'],
+                address=i['주소'],
+                phone_num=i['전화번호']
+            )
         print(df)
     else:
         messages.warning(request, "확장자가 xlsx가 아닙니다")
@@ -61,30 +47,33 @@ def excel_save(request):
     return redirect('web:main')
 
 #------------- 쿠폰 생성페이지 --------------
-def make_coupon_page(request):
-    return render(request,'make_coupon.html')
+def make_voucher_page(request):
+    return render(request,'make_voucher.html')
 
 #------------- 쿠폰 생성 --------------
-def make_coupon(request): # 겹치는거 기능 추가해야함
+def make_vouchers(request): # 겹치는거 기능 추가해야함
     
-    coupon_num = request.POST["coupon_num"]
+    pin_num = request.POST["pin_num"]
     price = request.POST["price"]
 
-    Coupon.objects.create(
-        coupon_num=coupon_num,
-        price=price
-    )
+    if Voucher.objects.exists(pin_num=pin_num):
+        messages.warning(request, "이미 존재하는 바우처 입니다")
+    else:
+        Voucher.objects.create(
+            pin_num=pin_num,
+            price=price
+        )
 
     return redirect('web:main')
 
-#------------- 메인 페이지 --------------
-def main(request):
-    return render(request,'main.html')
+# #------------- 메인 페이지 --------------
+# def main(request):
+#     return render(request,'main.html')
 
 #------------- 쿠폰 열람 페이지 --------------
-def show_coupons(request):
-    coupons=Coupon.objects.all()
-    return render(request,'coupon_list.html',{"coupons":coupons})
+def show_vouchers(request):
+    vouchers=Voucher.objects.all()
+    return render(request,'voucher_list.html',{"vouchers":vouchers})
 
 
 #------------- 회원가입 페이지 --------------
@@ -97,8 +86,8 @@ def signup(request):
         id=request.POST['id'],
         password=request.POST['password'],
     )
-    user.profile.job=request.POST['job']
-    user.profile.save()
+    user.job=request.POST['job']
+    user.save()
     login(request,user)
     return redirect('web:main')
 
@@ -130,29 +119,16 @@ def about(request):
 def view(request):
     return render(request, 'html/classes.html')
 
-# def csvTomodel(request):
-#     path='/Users/songryu/Desktop/capstonedesign_backend/web/media/files/data.xlsx'
-#     file=open(path)
-#     reader=csv.reader(file)
-#     print('----',reader)
-#     list=[]
-#     for row in reader:
-#         list.append(seops(a=row[0],
-#                           b=row[1],
-#                           c=row[2]))
-#     seops.objects.bulk_create(list)                    
-#     return HttpResponse('create model --')
 
+def set_main_page_excel(request):
+    excel_main=Excel_data.objects.filter(main=True)
+    excel_inst=Excel_data.objects.get(group=request.POST['main_page_excel'])
 
-# def main_view(request):
-#     with open('web/media/files/data.xlsx','r') as f:
-#         dr = csv.DictReader(f)
-#         s = pd.DataFrame(dr)
-#     ss = []
-#     for i in range(len(s)):
-#         st = (s['이름'][i], s['나이'][i], s['주소'][i])
-#         ss.append(st)
-#     for i in range(len(s)):
-#         Candidate.objects.create(name=ss[i][0], code=ss[i][1], ipo_date=ss[i][2])
-#         context={'df':s.to_html(justify='center')}
-#         return render(request,'classes.html',context)
+    if excel_main.exists():
+        excel_main=excel_main.first()
+        if excel_main!=excel_inst:
+            excel_main.main=False
+            excel_inst.main=True
+            excel_main.save()
+            excel_inst.save()
+    return redirect("web:main")
