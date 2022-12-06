@@ -8,7 +8,6 @@ class PostForm(forms.ModelForm):
 
 def handle_uploaded_file(f):
     with open('web/media/files/data.xlsx', 'wb+') as destination:
-
         for chunk in f.chunks():
             print(chunk)
             destination.write(chunk)

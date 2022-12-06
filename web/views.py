@@ -23,17 +23,26 @@ def upload_file(request):
     if request.method == 'POST':
        
         form = UploadFileForm(request.POST, request.FILES)
-        print(request.FILES)
-        print(request.POST)
+        # print(request.FILES)
+        print(request.FILES.get('file'))
+        # print(request.POST)
         print(form)
         if form.is_valid():
-            handle_uploaded_file(request.FILES['file'])
-            return HttpResponseRedirect('webtest')
+            print('form')
+          
+            handle_uploaded_file(request.FILES)
+            return redirect('web:about')
+
     else:
         form = UploadFileForm()
 
-    return render(request, 'webtest.html', {'form': form})
+    # return render(request, 'templatemo_555_upright/.html', {'form': form})
+    return redirect('web:about')
 
+
+def main(request):
+    data_list=[]
+    return render(request, 'html/index.html',{'data_list':data_list})
 
 def excel_save(request):
     excel=request.FILES.get('excel_file')
@@ -115,3 +124,35 @@ def logout_view(request):
 # def mail_send(reqeust):
 #     mail_subject='지원금 수령자로 선정되셨습니다' #메일 제목
 #     message=render_to_string('smtp_email.html')
+def about(request):
+    return render(request, 'html/about.html')
+
+def view(request):
+    return render(request, 'html/classes.html')
+
+# def csvTomodel(request):
+#     path='/Users/songryu/Desktop/capstonedesign_backend/web/media/files/data.xlsx'
+#     file=open(path)
+#     reader=csv.reader(file)
+#     print('----',reader)
+#     list=[]
+#     for row in reader:
+#         list.append(seops(a=row[0],
+#                           b=row[1],
+#                           c=row[2]))
+#     seops.objects.bulk_create(list)                    
+#     return HttpResponse('create model --')
+
+
+# def main_view(request):
+#     with open('web/media/files/data.xlsx','r') as f:
+#         dr = csv.DictReader(f)
+#         s = pd.DataFrame(dr)
+#     ss = []
+#     for i in range(len(s)):
+#         st = (s['이름'][i], s['나이'][i], s['주소'][i])
+#         ss.append(st)
+#     for i in range(len(s)):
+#         Candidate.objects.create(name=ss[i][0], code=ss[i][1], ipo_date=ss[i][2])
+#         context={'df':s.to_html(justify='center')}
+#         return render(request,'classes.html',context)

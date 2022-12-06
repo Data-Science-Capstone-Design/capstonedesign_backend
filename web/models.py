@@ -1,3 +1,4 @@
+from unicodedata import name
 from django.db import models
 from django.db.models import Model
 # Create your models here.
@@ -11,3 +12,11 @@ class Coupon(models.Model):
     price=models.IntegerField(null=True,blank=True)
     use=models.BooleanField(default=False) #사용여부
     issue=models.BooleanField(default=False) #발급여부
+
+class Candidate(models.Model):
+    name = models.CharField(max_length=10)
+    introduction = models.TextField()
+    area = models.CharField(max_length=15)
+    #party_number = models.IntegerField(default=0)
+    def __str__(self):
+        return 'name : {},introduction : {},area : {}'.format(self.name ,self.introduction, self.area)

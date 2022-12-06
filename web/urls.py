@@ -10,6 +10,12 @@ urlpatterns = [
     path('make_coupon_page',make_coupon_page,name='make_coupon_page'),
     path('make_coupon',make_coupon,name='make_coupon'),
     path('show_coupons',show_coupons,name='show_coupons'),
+    # path('templates/html/index',upload_file,name='index'),
+    # path('main/',main,name='main'),
+    path('upload_file/',upload_file,name='upload_file'),
+    path('about/',about,name='about'),
+     path('view/',view,name='view'),
+
     #path('postcreate/',views.test,name='test')
 
     # 웹용 회원가입 로그인
