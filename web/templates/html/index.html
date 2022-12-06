@@ -54,8 +54,11 @@
             </ul>
           </div>
         </nav>
+      {% comment %} <div class="col-md-1">
+      </div> {% endcomment %}
       
       <div class="mobile_menu">
+        
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
           {% comment %} <div class="logo_mobile"><a href="{% url 'web:main' %}"><img src="{% static 'images/logo1.png' %}"></a></div> {% endcomment %}
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,11 +77,13 @@
               </li>
             </ul>
           </div>
+          
         </nav>
       </div>
       <div class="container">
-        <div class="logo"><img src="{% static 'images/logo1.png' %}"><a href="{% url 'web:main' %}"></a></div>
-        <div class="menu_main">
+       
+        <div class="logo" ><img src="{% static 'images/logo1.png' %}"><a href="{% url 'web:main' %}"></a></div>
+        <div class="menu_main" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">
           <ul>
             <li><a href="{% url 'web:main' %}">Home</a></li>
             <li><a href="{% url 'web:about' %}">Management</a></li>
@@ -87,7 +92,60 @@
             <li><a href="news.html">News</a></li>-->
           </ul>
         </div>
+        <body>
+          <style>.main {
+            width: 250px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: 1px solid rgb(255, 255, 255);
+            border-radius: 5px;
+            margin-left: 10px;
+            margin-top: 10px;
+        }
+        
+        .logo {
+            margin-top: 4px;
+            margin-bottom: 10px;
+            margin-left: 5px;
+        }
+        
+        #login {
+            width: 50%;
+            background-color: rgb(122, 213, 211);
+            border-color: transparent;
+            color: white;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset; margin: 10px; background:#9de3e5; color:#fff; padding:10px; line-height:10px;  cursor:pointer; display:inline-block;
+        }
+        
+        .account {
+            display: block;
+            margin-bottom: 5px;
+            padding: 3px;
+            border: 1px solid rgb(34, 24, 24);
+            border-radius: 3px;
+        }
+        
+        #alert {
+            border-color: transparent;
+        }
+    
+    </style>
+          <div class="main">
+              <div class="container" style="padding:20px;">
+                  <input type="text" placeholder="ID" id="id" class="account">
+                  <input type="password" placeholder="Password" id="password" class="account">
+                  <button id="login" class="account">login</button>
+                  <p id="alert" class="account"> </p>
+              </div>
+          </div>   
+          <script src="script.js"></script>
+      </body>
       </div>
+      
+      
     <!-- header section end -->
 
     </div>
@@ -95,57 +153,35 @@
     </div>
     <!-- banner section end -->
     </div>
+    
     <!-- about section start -->
     <div class="about_section layout_padding">
       <div class="container">
+        
         <div class="row">
-          <div class="col-md-2">
+          <div class="col-md-3">
           </div>
           <div class="col-md-6">
-            <h1 class="live_text">금융 취약계층 관리 PORTAL</h1>
-            <p class="lorem_text">1인가구 금융연체자의 접근 편의 앱(웹)을 통한 고독사 및 사각지대 해소 서비스
-
-              1인가구 중 금융연체자 데이터를 기반으로 상호 인터렉션을 통한 현황을 파악하고 지원하는 맞춤형 Web<li></li></p>
+            <h1 class="live_text"style="border-radius: 10px; margin: 30px; padding: 20px; box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;" >복지 대상자 관리 및 모니터링</h1>
+            <p class="lorem_text">금융연체자인 복지대상자를 대상으로, 생필품 구매를 위한 바우처 제공 및 모니터링을 통한 복지사각지대 해소 서비스<li></li></p>
             <div class="online_bt_main">
-              <div class="read_bt1"><a href="#">Read More</a></div>
+              <div class="read_bt1" ><a href="#" >Read More</a></div>
               <div class="col-md-5">
               </div>
-            </div>
-            
-            
-          </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
     <!-- about section end -->
   
     <!-- success section end --> 
     <!-- contact section start -->
-    <div class="contact_section layout_padding">
-      <div class="container-fluid">
-        <div class="contact_text"><b>MAP</b> <span class="contact_us_text"></span></div>
-        <div class="contact_section2">
-<!-- Map -->
-<div class="mapouter mb-4">
-  <div class="gmap_canvas">
-      <iframe width="100%" height="520" id="gmap_canvas"
-          src="https://maps.google.com/maps?width=100%25&amp;height=600&amp;hl=en&amp;q=%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%20%EC%82%BC%EC%84%B12%EB%8F%99%20%ED%95%99%EB%8F%99%EB%A1%9C%20%EA%B0%95%EB%82%A8%EA%B5%AC%EC%B2%AD+(%EC%86%A1%EB%A5%98)&amp;t=&amp;z=15&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"
-          frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
-  </div>
-</div>
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- contact section end --> 
     <!-- footer section start -->
     <div class="footer_section layout_padding">
       <div class="container">
         <div class="row">
-          <div class="col-lg-4 col-sm-6">
-            <h1 class="customer_text">About</h1>
-            <p class="footer_lorem_text">설명</p>
-          </div>
           <div class="col-lg-4 col-sm-6">
             <h1 class="customer_text">Address</h1>
             <p class="footer_lorem_text1">Address: 서울특별시 강남구 학동로 426</p>
