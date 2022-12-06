@@ -33,9 +33,10 @@
 <body>
     <!-- header section start -->
     <div class="header_section">
+      
       <div class="mobile_menu">
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <div class="logo_mobile"><a href="index.html"><img src="{% static 'images/logo1.png' %}"></a></div>
+          <div class="logo_mobile"><a href="{% url 'web:main' %}"><img src="{% static 'images/logo1.png' %}"></a></div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -55,15 +56,19 @@
         </nav>
       </div>
       <div class="container">
-        <div class="logo"><a href="index.html"><img src="{% static 'images/logo1.png' %}"></a></div>
-        <div class="menu_main">
+        <div class="logo" ><img src="{% static 'images/logo1.png' %}"><a href="index.html"></a></div>
+        <div class="menu_main" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">
           <ul>
             <li><a href="{% url 'web:main' %}">Home</a></li>
-            <li><a href="{% url 'web:about' %}">About</a></li>
+            <li><a href="{% url 'web:about' %}">Management</a></li>
             <li><a href="{% url 'web:view' %}">VIEW</a></li>
+            <!--<li><a href="events.html">Events</a></li>
+            <li><a href="news.html">News</a></li>-->
           </ul>
         </div>
       </div>
+    <!-- header section end -->
+
     </div>
     <!-- header section end -->
     <!-- classes section start -->
@@ -72,9 +77,8 @@
         <div class="row">
     <!-- classes section end -->
     <!-- footer section start -->
-    <h1 class="live_text">사용 현황</h1>
-
-  <table class="styled-table"  width="80%">
+    <h1 class="live_text" >사용 현황</h1>
+  <table class="styled-table"  width="80%";>
     <thead>
         <tr>
             <th >Name</th>
@@ -90,7 +94,7 @@
         <tr class="active-row">
             <td>김송류</td>
             <td>999222</td>
-            <td>서울시...</td>
+            <td>서울시 ...</td>
             <td>010-0000-0000</td>
             <td>2022.12.2</td>
             <td>5600</td>
@@ -100,25 +104,25 @@
         <tr class="active-row">
           <td>도영훈</td>
           <td>999222</td>
-          <td>서울시</td>
+          <td>서울시 ...</td>
           <td>010-0000-0000</td>
           <td>2022.12.2</td>
           <td>5600</td>
-          <td>0</td>
+          <td>1000000</td>
           <tr class="active-row">
             <td>이태검</td>
             <td>999222</td>
-            <td>서울시</td>
+            <td>서울시 ...</td>
             <td>010-0000-0000</td>
             <td>2022.12.2</td>
             <td>5600</td>
-            <td>1</td>
+            <td>1000000</td>
             <tr class="active-row">
             <td>최소영</td>
             <td>999222</td>
-            <td>서울시</td>
-            <td>2022.12.2</td>
+            <td>서울시 ...</td>
             <td>010-0000-0000</td>
+            <td>2022.12.2</td>
             <td>5600</td>
             <td>1000000</td>
         </tr>
@@ -128,11 +132,44 @@
 </div>
 </div>
 </div>
+
+<div class="footer_section layout_padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-4 col-sm-6">
+        <h1 class="customer_text">Address</h1>
+        <p class="footer_lorem_text1">Address: 서울특별시 강남구 학동로 426</p>
+        <p class="footer_lorem_text2">Tel: 02-3423-5114</p>
+        <p class="footer_lorem_text2">FAX: 02-3423-8800</p>
+        <div class="social_icon">
+          <ul>
+            <li><a href="#"><img src="{% static 'images/fb-icon.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/twitter-icon.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/google-icon.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/linkedin-icon.png' %}"></a></li>
+            <li><a href="#"><img src="{% static 'images/youtub-icon.png' %}"></a></li>
+          </ul>
+      </div>
+      </div>
+      <div class="col-lg-4 col-sm-6">
+        <h1 class="customer_text">OUR Timings</h1>
+        <div class="time_main">
+          <div class="footer_lorem_text">Monday <span class="monday_text">8:00 am - 6:00 pm</span></div>
+          <div class="footer_lorem_text">Tuesday <span class="monday_text1">8:00 am - 6:00 pm</span></div>
+          <div class="footer_lorem_text">Thursday <span class="monday_text2">8:00 am - 6:00 pm</span></div>
+          <div class="footer_lorem_text">Friday <span class="monday_text3">8:00 am - 6:00 pm</span></div>
+          <div class="footer_lorem_text">Saturday <span class="monday_text4">8:00 am - 6:00 pm</span></div>
+          <div class="footer_lorem_text">Sunday <span class="monday_text5">CLOSED</span></div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
     <!--  footer section end -->
     <!-- copyright section start -->
     <div class="copyright_section">
       <div class="container">
-        <p class="copyright_text">2019 All Rights Reserved. Design by <a href="https://html.design">Free html  Templates</a></p>
+        <p class="copyright_text">2022 dongguk university<a href="https://html.design">  볼빨간노년기</a></p>
       </div>
     </div>
     <!-- copyright section end -->

@@ -37,8 +37,8 @@
       <div class="mobile_menu">
       </div>
       <div class="container">
-        <div class="logo"><a href="index.html"><img src="{% static 'images/logo1.png' %}"></a></div>
-        <div class="menu_main">
+        <div class="logo"><a href="{% url 'web:main' %}"><img src="{% static 'images/logo1.png' %}"></a></div>
+        <div class="menu_main" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">
           <ul>
             <li><a href="{% url 'web:main' %}">Home</a></li>
             <li><a href="{% url 'web:about' %}">Management</a></li>
@@ -56,8 +56,10 @@
         <div class="row">
           <div class="col-md-2">
           </div>
+          <div class="col-md-1">
+          </div>
           <div class="col-xs-6">
-            <h1 class="live_text">대상자 관리</h1>
+            <h1 class="live_text" style="border-radius: 10px; margin: 15px; padding: 20px; box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">대상자 관리</h1>
             <div class="row">
               <form method="POST" action="{% url 'web:upload_file' %}" enctype="multipart/form-data">
                   {% csrf_token %}
@@ -68,13 +70,14 @@
                   <!-- <div class="col-md-3 col-sm-6"></div>
                   <div class="col-md-3 col-sm-6"></div> -->
                     <button type="submit" id="but" value='전송' 
-                    style="background:#23a3a7; color:#fff; padding:15px 15px; line-height:30px;  cursor:pointer; display:inline-block; ">data upload 
+                    style="box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset; margin: 15px; background:#23a3a7; color:#fff; padding:15px; line-height:30px;  cursor:pointer; display:inline-block; ">data upload 
                     </button>
                     <!--  <a id="id_uploaded_file" href="{ uploadFileModel.file.url }" download>Download</a>-->
                     </form> 
                   </div>
-                <h1 class="live_text">DataFrame</h1>
-                <table class="styled-table"  width="150%">
+                <h1 class="live_text" >DataFrame</h1>
+
+                <table width="300%" >
                   <thead>
                       <tr>
                           <th >Name</th>
@@ -88,7 +91,7 @@
                     <tr class="active-row">
                           <td >김송류</td>
                           <td>999222</td>
-                          <td>서울시...</td>
+                          <td>서울시 중구 </td>
                           <td>010-0000-0000</td>
                           <td>
                             <a href="" class="btn btn-primary"">Send</a>
@@ -97,7 +100,7 @@
                       <tr class="active-row">
                         <td>도영훈</td>
                         <td>999222</td>
-                        <td>서울시</td>
+                        <td>서울시 중구</td>
                         <td>010-0000-0000</td>
                         <td>
                           <a href="" class="btn btn-primary">Send</a>
@@ -105,7 +108,7 @@
                         <tr class="active-row">
                           <td>이태검</td>
                           <td>999222</td>
-                          <td>서울시</td>
+                          <td>서울시 중구</td>
                           <td>010-0000-0000</td>
                           <td>
                             <a href="" class="btn btn-primary"">Send</a>
@@ -113,7 +116,7 @@
                           <tr class="active-row">
                           <td>최소영</td>
                           <td>999222</td>
-                          <td>서울시</td>
+                          <td>서울시 중구</td>
                           <td>010-0000-0000</td>
                           <td>
                             <a href="" class="btn btn-primary"">Send</a>
@@ -135,14 +138,10 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-sm-6">
-            <h1 class="customer_text">About</h1>
-            <p class="footer_lorem_text">...</p>
-          </div>
-          <div class="col-lg-4 col-sm-6">
             <h1 class="customer_text">Address</h1>
             <p class="footer_lorem_text1">Address: 서울특별시 강남구 학동로 426</p>
             <p class="footer_lorem_text2">Tel: 02-3423-5114</p>
-            <p class="footer_lorem_text2">Email:info@company.comm</p>
+            <p class="footer_lorem_text2">FAX: 02-3423-8800</p>
             <div class="social_icon">
             <ul>
               <li><a href="#"><img src="{% static 'images/fb-icon.png' %}"></a></li>
@@ -153,15 +152,25 @@
             </ul>
           </div>
           </div>
+          <div class="col-lg-4 col-sm-6">
+            <h1 class="customer_text">OUR Timings</h1>
+            <div class="time_main">
+              <div class="footer_lorem_text">Monday <span class="monday_text">8:00 am - 6:00 pm</span></div>
+              <div class="footer_lorem_text">Tuesday <span class="monday_text1">8:00 am - 6:00 pm</span></div>
+              <div class="footer_lorem_text">Thursday <span class="monday_text2">8:00 am - 6:00 pm</span></div>
+              <div class="footer_lorem_text">Friday <span class="monday_text3">8:00 am - 6:00 pm</span></div>
+              <div class="footer_lorem_text">Saturday <span class="monday_text4">8:00 am - 6:00 pm</span></div>
+              <div class="footer_lorem_text">Sunday <span class="monday_text5">CLOSED</span></div>
+              </div>
+          </div>
           </div>
         </div>
       </div>
-    </div>
     <!--  footer section end -->
     <!-- copyright section start -->
     <div class="copyright_section">
       <div class="container">
-        <p class="copyright_text">Copyright 2022 dongguk university <a href="https://html.design"></a></p>
+        <p class="copyright_text">2022 dongguk university<a href="https://html.design">  볼빨간노년기</a></p>
       </div>
     </div>
     <!-- copyright section end -->
