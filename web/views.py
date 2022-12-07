@@ -1,87 +1,177 @@
-#from msilib.schema import Billboard
 from django.shortcuts import render,redirect
-from .models import Document
-from .forms import PostForm,UploadFileForm,handle_uploaded_file
-from django.http import HttpResponse,HttpResponseRedirect 
-from .models import Candidate
-import csv
+# from .forms import UploadFileForm
+from .models import *
+from django.contrib.auth import authenticate,logout,login
+from django.contrib.auth import get_user_model
+from django.contrib import messages
+# from django.core.mail import EmailMessage
+# from django.template.loader import render_to_string
 import pandas as pd
-
-"""
-# Create your views here.
-def test(request):
-    if request.method=='GET': 
-        modelform=PostForm()
-        return render(request,'webtest.html',{'modelform':modelform}) #postform을 변수에 담아서 webtest.html 을 렌더링
-#템플릿 불러오기 
-    elif request.method=='POST':
-        modelform=PostForm(request.POST) #입력된 내용들 변수에 저장
-        if modelform.is_valid(): #form 이 유효하면 
-            post=modelform.save(commit=False) #데이터가져옴
-            post.files=request.FILES('file')
-            post.save() #DB에 저장
-            return redirect('webtest.html'+str(post.id)) #URL로 이동
-
-def read(requests,bid):
-    post=Document.objects.prefetch_related('post_set').get(id=bid)
-    return render(requests,'web/list.html',{'post':post})
-"""
+import os
+from django.utils import timezone
+from django.db.models import Q,F,Value,Func,Count,Sum,CharField
+from django.http import FileResponse
+from django.core.files.storage import FileSystemStorage
 
 
-def upload_file(request):
-    if request.method == 'POST':
-       
-        form = UploadFileForm(request.POST, request.FILES)
-        # print(request.FILES)
-        print(request.FILES.get('file'))
-        # print(request.POST)
-        print(form)
-        if form.is_valid():
-            print('form')
-          
-            handle_uploaded_file(request.FILES)
-            return redirect('web:about')
 
-    else:
-        form = UploadFileForm()
-
-    # return render(request, 'templatemo_555_upright/.html', {'form': form})
-    return redirect('web:about')
-
+User=get_user_model()
 
 def main(request):
-    data_list=[]
-    return render(request, 'html/index.html',{'data_list':data_list})
+   
+    return render(request, 'html/index.html')
 
+def excel_save(request):
+    excel=request.FILES.get('excel_file')
+    print(request.POST)
+    print(excel)
+    filename,fileExtension=os.path.splitext(str(excel))
+    print(filename)
+    print(fileExtension)
+    if fileExtension == '.xlsx':
+        group=str(timezone.now().strftime('%Y/%m/%d - %H:%M:%S'))
+        df=pd.read_excel(excel)
+        for j,i in df.iterrows():
+            # print(group)
+            # print(type(group))
+            # print(i['생년월일'])
+            Excel_data.objects.create(
+                group=group,
+                username=i['이름'],
+                birth=i['생년월일'],
+                address=i['주소'],
+                phone_num=i['전화번호'],
+                writer=request.user
+            )
+        print(df)
+    else:
+        messages.warning(request, "확장자가 xlsx가 아닙니다")
+
+    return redirect('web:about')
+
+#------------- 쿠폰 생성페이지 --------------
+def make_voucher_page(request):
+    return render(request,'make_voucher.html')
+
+#------------- 쿠폰 생성 --------------
+def make_vouchers(request): # 겹치는거 기능 추가해야함
+    
+    pin_num = request.POST["voucher_num"]
+    price = request.POST["price"]
+    
+    if Voucher.objects.filter(pin_num=pin_num).exists():
+        messages.warning(request, "이미 존재하는 바우처 입니다")
+    else:
+        Voucher.objects.create(
+            pin_num=pin_num,
+            price=price,
+            issuer=request.user
+        )
+
+    return redirect('web:make_voucher_page')
+
+
+#------------- 쿠폰 열람 페이지 --------------
+def show_vouchers(request):
+    vouchers=Voucher.objects.filter(issuer=request.user)
+    return render(request,'html/voucher.html',{"vouchers":vouchers})
+
+
+#------------- 회원가입 페이지 --------------
+def signuppage(request):
+    return render(request,'accounts/signup.html')
+
+#------------- 회원가입 --------------
+def signup(request):
+    user=User.objects.create_user(
+        id=request.POST['id'],
+        password=request.POST['password'],
+    )
+    user.job=request.POST['job']
+    user.save()
+    login(request,user)
+    return redirect('web:main')
+
+#------------- 로그인 페이지 --------------
+def loginpage(request):
+    return render(request,'accounts/login.html')
+
+def login_view(request):
+    print()
+    user=authenticate(id=request.POST['id'],password=request.POST['password'])
+    if user is not None:
+        login(request,user)
+        return redirect('web:main')
+    else:
+        messages.warning(request, "비밀번호가 틀렸거나 회원이 아닙니다.")
+        return redirect('web:main')
+
+#------------- 로그아웃 --------------
+def logout_view(request):
+    logout(request)
+    return redirect('web:main')
+
+#------------- 엑셀 다운로드 --------------
+def download_excel(request):
+  
+    file_path = os.path.abspath("web/static/excel/")
+    file_name = os.path.basename("web/static/excel/default.xlsx")
+    print(file_path)
+    print(file_name)
+    fs = FileSystemStorage(file_path)
+    response = FileResponse(fs.open(file_name, 'rb'),
+                            content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="default.xlsx"'
+
+    return response
+
+# # ----------- 메일 전송 --------------
+# def mail_send(reqeust):
+#     mail_subject='지원금 수령자로 선정되셨습니다' #메일 제목
+#     message=render_to_string('smtp_email.html')
 def about(request):
-    return render(request, 'html/about.html')
+    excels=Excel_data.objects.filter(writer=request.user)
+    excel_group=excels.values('group').annotate(ct=Count('group'))
 
-def view(request):
-    return render(request, 'html/classes.html')
+    main_group=None
+    main_excel_data=None
+    mx=Main_excel.objects.filter(user=request.user)
+    if mx.exists():
+        mx=mx.first()
+        main_group=mx.group
+        main_excel_data=excels.filter(group=mx.group)
 
-def csvTomodel(request):
-    path='/Users/songryu/Desktop/capstonedesign_backend/web/media/files/data.xlsx'
-    file=open(path)
-    reader=csv.reader(file)
-    print('----',reader)
-    list=[]
-    for row in reader:
-        list.append(seops(a=row[0],
-                          b=row[1],
-                          c=row[2]))
-    seops.objects.bulk_create(list)                    
-    return HttpResponse('create model --')
+    context={
+        "excel_group":excel_group,
+        "main_excel_data":main_excel_data,
+        "main_group":main_group
+    }
+
+    return render(request, 'html/about.html',context)
 
 
-def main_view(request):
-    with open('web/media/files/data.xlsx','r') as f:
-        dr = csv.DictReader(f)
-        s = pd.DataFrame(dr)
-    ss = []
-    for i in range(len(s)):
-        st = (s['이름'][i], s['나이'][i], s['주소'][i])
-        ss.append(st)
-    for i in range(len(s)):
-        Candidate.objects.create(name=ss[i][0], code=ss[i][1], ipo_date=ss[i][2])
-        context={'df':s.to_html(justify='center')}
-        return render(request,'classes.html',context)
+
+def set_main_page_excel(request):
+    main=Main_excel.objects.filter(user=request.user)
+    print(request.POST['main_page_excel'])
+    if main.exists():
+        main=main.first()
+        main.group=request.POST['main_page_excel']
+        main.save()
+    else:
+        main=Main_excel.objects.create(
+            user=request.user,
+            group=request.POST['main_page_excel']
+        )
+    
+    return redirect("web:about")
+
+def register_product(request):
+    Product.objects.create(
+        name=request.POST['name'],
+        price=request.POST['price'],
+        admin=request.user,
+        possible=request.POST['possible'],
+    )
+    return redirect("web:main")
+

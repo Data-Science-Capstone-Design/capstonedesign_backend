@@ -1,0 +1,40 @@
+<style>
+    table {
+      width: 100%;
+      border: 1px solid #444444;
+    }
+    td {
+      border: 1px solid #444444;
+    }
+  </style>
+{% for coupon in coupons %}
+    <table>
+        <tr>
+            <th>쿠폰번호</th>
+            <th>쿠폰잔액</th>
+            <th>사용여부</th>
+            <th>발급여부</th>
+
+        </tr>
+        <tr>
+            <td>{{coupon.coupon_num}}</td>
+            <td>{{coupon.price}}</td>
+            <td>
+            {% if coupon.use %} 
+                사용완료
+            {% endif %}
+            </td>
+            <td>
+            {% if coupon.issue %} 
+                발급완료
+            {% endif %}
+            </td>
+            
+            
+        </tr>
+    </table>
+    
+
+    
+
+{%endfor%}

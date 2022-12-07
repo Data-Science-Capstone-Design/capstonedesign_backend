@@ -1,0 +1,31 @@
+{% if messages  %}
+    {% for message in messages %}
+        <div class="alert {{ message.tags }} alert-auto-dismissible alert-dismissible notification-container text-center" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <a href="{% url 'web:main' %}">돌아가기</a>
+
+{% else %}
+    {% if user.is_authenticated %}
+        <a href="{% url 'web:logout' %}">로그아웃</a>
+    {% else %}
+        <a href="{% url 'web:signuppage' %}">회원가입 페이지</a>
+        <a href="{% url 'web:loginpage' %}">로그인 페이지</a>
+
+        
+        <form action="{% url 'web:excel_save' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="file"
+                   title="Upload excel file"
+                   name="excel_file"
+                   style="border: 1px solid black; padding: 5px;"
+                   required="required">
+            <p>
+            <input type="submit"
+                   value="Upload"
+                   style="border: 1px solid green; padding:5px; border-radius: 2px; cursor: pointer;">
+        </form>
+
+    {% endif%}
+{% endif %}
