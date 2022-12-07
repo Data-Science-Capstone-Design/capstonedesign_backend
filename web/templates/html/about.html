@@ -249,7 +249,8 @@
                     <td>{{data.address}}</td>
                     <td>{{data.phone_num}}</td>
                     <td>
-                      <a href="" class="btn btn-primary">Send</a>
+                    <a class="btn btn-primary" onclick="window.open(this.href, '_blank', 'width=200, height=200'); return false;" href="{% url 'web:send_sms_page' data.phone_num %}">Send</a>
+
                     </td>
                   </tr>
                   {% endfor %}

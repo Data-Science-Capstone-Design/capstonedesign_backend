@@ -189,9 +189,10 @@
               </tr>
             </thead>
             <tbody>
-              {% for voucher in vouchers %}
+              {% for payment in payments %}
               <tr class="active-row">
-                <td>{{voucher}}</td>
+                <td>{{payment.user.username}}</td>
+                <td>{{payment.address}}</td>
                 <td>김송류</td>
                 <td>999222</td>
                 <td>서울시 ...</td>

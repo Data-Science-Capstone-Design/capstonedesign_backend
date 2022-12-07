@@ -39,6 +39,10 @@ def get_secret(setting,secrets=secrets):
 
 SECRET_KEY = get_secret('SECRET_KEY')
 
+SMS_ACCESS=get_secret("SMS_ACCESS")
+SMS_SECRET=get_secret("SMS_SECRET")
+SMS_SERVICE_ID=get_secret("SMS_SERVICE_ID")
+SEND_PHONE=get_secret("SEND_PHONE")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,14 +99,14 @@ AUTH_USER_MODEL = "app.User"
 
 WSGI_APPLICATION = 'capstonedesign_backend.wsgi.application'
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    )
-}
+# REST_FRAMEWORK = {
+#     "DEFAULT_AUTHENTICATION_CLASSES": (
+#         "rest_framework_simplejwt.authentication.JWTAuthentication",
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': (
+#         'rest_framework.permissions.IsAuthenticated',
+#     )
+# }
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1000),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1000),

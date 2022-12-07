@@ -12,8 +12,14 @@ from django.utils import timezone
 from django.db.models import Q,F,Value,Func,Count,Sum,CharField
 from django.http import FileResponse
 from django.core.files.storage import FileSystemStorage
-
-
+from app.models import Payment_details
+from django.conf import settings
+import requests
+import time
+import sys
+import hashlib
+import hmac
+import base64
 
 User=get_user_model()
 
@@ -68,13 +74,18 @@ def make_vouchers(request): # 겹치는거 기능 추가해야함
             issuer=request.user
         )
 
-    return redirect('web:make_voucher_page')
+    return redirect('web:close')
 
 
-#------------- 쿠폰 열람 페이지 --------------
+#------------- 쿠폰 상태 페이지 --------------
 def show_vouchers(request):
     vouchers=Voucher.objects.filter(issuer=request.user)
     return render(request,'html/voucher.html',{"vouchers":vouchers})
+#------------- 결제 내역 페이지 --------------
+def payment_page(request):
+
+    payments=Payment_details.objects.filter(user=request.POST['user'])
+    return render(request,'html/voucher.html',{"payments":payments})
 
 
 #------------- 회원가입 페이지 --------------
@@ -175,3 +186,68 @@ def register_product(request):
     )
     return redirect("web:main")
 
+def send_sms_page(request,phone_num):
+    return render(request,"html/send_sms_page.html",{"phone_num":phone_num})
+
+def send_sms(request):
+    pin=request.POST['pin_num']
+    print(pin)
+    print(request.POST['phone_num'])
+    sms(request.POST['phone_num'],pin)
+    vou=Voucher.objects.get(pin_num=pin)
+    vou.issue=timezone.now()
+    vou.save()
+    return redirect("web:close")
+def close(request):
+    return render(request,'close.html')
+
+def	make_signature(access,secret):
+    timestamp = int(time.time() * 1000)
+    timestamp = str(timestamp)
+    access_key = "{}".format(access)
+    secret_key = "{}".format(secret)
+    secret_key = bytes(secret_key, 'UTF-8')
+    method = "GET"
+    uri = "/photos/puppy.jpg?query1=&query2"
+    message = method + " " + uri + "\n" + timestamp + "\n"+ access_key
+    message = bytes(message, 'UTF-8')
+    signingKey = base64.b64encode(hmac.new(secret_key, message, digestmod=hashlib.sha256).digest())
+    return signingKey
+def make_signature(access,secret):
+    secret_key = bytes(secret, 'UTF-8')
+    access = bytes(access, 'UTF-8')
+    string_hmac = hmac.new(secret_key, access, digestmod=hashlib.sha256).digest()
+    string_base64 = base64.b64encode(string_hmac).decode('UTF-8')
+    return string_base64
+
+def sms(phone_num,pin_num):
+    phone_num=phone_num.replace("-","")
+    SMS_ACCESS = getattr(settings, 'SMS_ACCESS', None)
+    SMS_SECRET = getattr(settings, 'SMS_SECRET', None)
+    SMS_SERVICE_ID = getattr(settings, 'SMS_SERVICE_ID', None)
+    SEND_PHONE = getattr(settings, 'SEND_PHONE', None)
+
+    headers={
+        'Content-Type': 'application/json; charset=utf-8',
+        'x-ncp-apigw-timestamp': str(int(time.time() * 1000)),
+        'x-ncp-iam-access-key': f'{SMS_ACCESS}',
+        'x-ncp-apigw-signature-v2':make_signature(SMS_ACCESS,SMS_SECRET)
+    }
+    print(headers)
+    data={
+        'type':'SMS',
+        'contentType':'COMM',
+        'countryCode':'82',
+        'from':f'{SEND_PHONE}',
+        'content':"[강남한끼]",
+        'messages':[
+            {
+                "to":f'{phone_num}',
+                'content':"바우처 번호 : {}\n 해당 바우처 번호를 등록하고 강남한끼를 통해 편의점에서 생필품을 구입해보아요!".format(pin_num),
+            }
+                
+            ],
+    }
+    print(data)
+    res=requests.post('https://sens.apigw.ntruss.com/sms/v2/services/{}/messages'.format(SMS_SERVICE_ID), headers=headers, json=data)
+    print(res.status_code)
