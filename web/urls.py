@@ -12,9 +12,10 @@ urlpatterns = [
     path('show_vouchers/',show_vouchers,name='show_vouchers'),
     # path('templates/html/index',upload_file,name='index'),
     path('set_main_page_excel/',set_main_page_excel,name='set_main_page_excel'),
+    path('register_product/',register_product,name='register_product'),
     # path('upload_file/',upload_file,name='upload_file'),
     path('about/',about,name='about'),
-     path('view/',view,name='view'),
+     path('download_excel/',download_excel,name='download_excel'),
 
     #path('postcreate/',views.test,name='test')
 
