@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.db.models import Q,F,Value,Func,Count,Sum,CharField
 from django.http import FileResponse
 from django.core.files.storage import FileSystemStorage
-
+from app.models import Payment_details
 
 
 User=get_user_model()
@@ -71,10 +71,15 @@ def make_vouchers(request): # 겹치는거 기능 추가해야함
     return redirect('web:make_voucher_page')
 
 
-#------------- 쿠폰 열람 페이지 --------------
+#------------- 쿠폰 상태 페이지 --------------
 def show_vouchers(request):
     vouchers=Voucher.objects.filter(issuer=request.user)
     return render(request,'html/voucher.html',{"vouchers":vouchers})
+#------------- 결제 내역 페이지 --------------
+def payment_page(request):
+
+    payments=Payment_details.objects.filter(user=request.POST['user'])
+    return render(request,'html/voucher.html',{"payments":payments})
 
 
 #------------- 회원가입 페이지 --------------

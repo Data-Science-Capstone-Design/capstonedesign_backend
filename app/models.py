@@ -78,6 +78,7 @@ class Payment_details(models.Model): #결제 내역
     balance=models.IntegerField(null=True,blank=True)
     user=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     seller=models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sellers')
+    time=models.DateTimeField(null=True,blank=True)
 
 # class Profile(models.Model):
 #     user = models.OneToOneField(User,on_delete=models.CASCADE,db_column='user')

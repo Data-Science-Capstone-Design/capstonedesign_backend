@@ -14,6 +14,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 import logging
 from django.utils import timezone
 from django.contrib.auth import get_user_model
+
 User=get_user_model()
 
 # Create your views here.
@@ -66,6 +67,11 @@ def voucher_registration(request):
 #-------------  내 잔액 --------------
 @api_view(['GET'])
 def info_and_balance(request):
+    # 시연-------
+    user=User.objects.get(id='test')
+    login(request,user)
+    print(request.user)
+    # -------------
     return Response({"balance":request.user.cash,"user":request.user.id},status=status.HTTP_200_OK)
 
 #-------- 물품 가격 조회 --------
@@ -95,13 +101,14 @@ def payment(request):
         if user.cash>=price_sum:
             user.cash-=price_sum
             user.save()
-
+            now=timezone.now()
             payment_history=Payment_details.objects.create(
                 address=request.user.address,
                 price=price_sum,
                 balance=user.cash,
                 user=user,
-                seller=request.user
+                seller=request.user,
+                time=now
             )
 
             return Response({"remain_cash":user.cash},status=status.HTTP_201_CREATED)
