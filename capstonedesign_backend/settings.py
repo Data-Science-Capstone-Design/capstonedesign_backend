@@ -39,6 +39,10 @@ def get_secret(setting,secrets=secrets):
 
 SECRET_KEY = get_secret('SECRET_KEY')
 
+SMS_ACCESS=get_secret("SMS_ACCESS")
+SMS_SECRET=get_secret("SMS_SECRET")
+SMS_SERVICE_ID=get_secret("SMS_SERVICE_ID")
+SEND_PHONE=get_secret("SEND_PHONE")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

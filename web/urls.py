@@ -15,7 +15,10 @@ urlpatterns = [
     path('register_product/',register_product,name='register_product'),
     # path('upload_file/',upload_file,name='upload_file'),
     path('about/',about,name='about'),
-     path('download_excel/',download_excel,name='download_excel'),
+    path('download_excel/',download_excel,name='download_excel'),
+    path('send_sms_page/<str:phone_num>/',send_sms_page,name='send_sms_page'),
+    path('send_sms/',send_sms,name='send_sms'),
+    path('close/',close,name='close'),
 
     #path('postcreate/',views.test,name='test')
 
