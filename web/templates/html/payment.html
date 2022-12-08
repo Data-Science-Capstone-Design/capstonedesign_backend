@@ -105,9 +105,13 @@
           <ul>
             <li><a href="{% url 'web:main' %}">Home</a></li>
             <li><a href="{% url 'web:about' %}">Management</a></li>
-            <li><a href="{% url 'web:show_vouchers' %}">VIEW</a></li>
+            <li><a href="{% url 'web:show_vouchers' %}">Voucher</a></li>
+            <li><a href="{% url 'web:show_payment_info' %}">Payment</a></li>
+            
             {% if user.is_authenticated %}
-            <a href="{% url 'web:logout' %}">로그아웃</a>
+            <li>
+              <a style="width=100%; height=100%;" href="{% url 'web:logout' %}"><button type="button" style="width=100%; height=100%;" class="account">logout</button></a>
+              </li>
             {% else %}
             <div style="display: flex; padding-left: 10px; margin-left: 20px">
               <form
@@ -151,7 +155,16 @@
         <div class="row">
           <!-- classes section end -->
           <!-- footer section start -->
-          <h1 class="live_text">바우처 사용 현황</h1>
+          <h1 class="live_text"
+          style="
+                  border-radius: 10px;
+                  margin: 15px;
+                  padding: 20px;
+                  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+                    rgba(0, 0, 0, 0.3) 0px 30px 60px -30px,
+                    rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;
+                "
+              >결제 현황</h1>
           <div class="col"></div>
           <div class="col-6">
             {% comment %} {% if excel_group %}
@@ -179,58 +192,26 @@
           <table class="styled-table" width="80%" ;>
             <thead>
               <tr>
-                <th style="text-align: center">Name</th>
-                <th style="text-align: center">Age</th>
-                <th style="text-align: center">Address</th>
-                <th style="text-align: center">Phone</th>
-                <th style="text-align: center">사용날짜</th>
-                <th style="text-align: center">사용금액</th>
-                <th style="text-align: center">남은금액</th>
+                <th style="text-align: center">결제금액</th>
+                <th style="text-align: center">잔여잔액</th>
+                <th style="text-align: center">결제장소</th>
+                <th style="text-align: center">결제시간</th>
+                <th style="text-align: center">판매자</th>
+                <th style="text-align: center">사용자</th>
               </tr>
             </thead>
             <tbody>
               {% for payment in payments %}
               <tr class="active-row">
-                <td>{{payment.user.username}}</td>
+                <td>{{payment.price}}</td>
+                <td>{{payment.balance}}</td>
                 <td>{{payment.address}}</td>
-                <td>김송류</td>
-                <td>999222</td>
-                <td>서울시 ...</td>
-                <td>010-0000-0000</td>
-                <td>2022.12.2</td>
-                <td>5600</td>
-                <td>1000000</td>
+                <td>{{payment.time}}</td>
+                <td>{{payment.seller.id}}</td>
+                <td>{{payment.user.id}}</td>
               </tr>
               {% endfor %}
-              <tr class="active-row">
-                <td>도영훈</td>
-                <td>999222</td>
-                <td>서울시 ...</td>
-                <td>010-0000-0000</td>
-                <td>2022.12.2</td>
-                <td>5600</td>
-                <td>1000000</td>
-              </tr>
-
-              <tr class="active-row">
-                <td>이태검</td>
-                <td>999222</td>
-                <td>서울시 ...</td>
-                <td>010-0000-0000</td>
-                <td>2022.12.2</td>
-                <td>5600</td>
-                <td>1000000</td>
-              </tr>
-
-              <tr class="active-row">
-                <td>최소영</td>
-                <td>999222</td>
-                <td>서울시 ...</td>
-                <td>010-0000-0000</td>
-                <td>2022.12.2</td>
-                <td>5600</td>
-                <td>1000000</td>
-              </tr>
+              
               <!-- and so on... -->
             </tbody>
           </table>
