@@ -142,7 +142,7 @@ def download_excel(request):
 #     message=render_to_string('smtp_email.html')
 def about(request):
     excels=Excel_data.objects.filter(writer=request.user)
-    excel_group=excels.values('group').annotate(ct=Count('group'))
+    excel_group=excels.values('group').annotate(ct=Count('group')).order_by('-group')
 
     main_group=None
     main_excel_data=None
