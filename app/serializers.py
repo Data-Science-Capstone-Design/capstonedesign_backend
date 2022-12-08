@@ -51,3 +51,8 @@ class ProductInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model=Product
         fields=['id','name','price']
+    
+class PaymentInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Payment_details
+        fields=['address','price','balance']

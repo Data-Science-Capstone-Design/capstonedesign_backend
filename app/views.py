@@ -47,6 +47,15 @@ def update_profile(request):
 @api_view(['PUT'])
 def voucher_registration(request):
     body=json.loads(request.body)
+
+    # 시연-------
+    if request.user.is_authenticated:
+        logout(request)
+    user=User.objects.get(id='user')
+    login(request,user)
+    print(request.user)
+    # -------------
+
     result={}
     voucher=Voucher.objects.filter(pin_num=body['pin_num'])
     if voucher.exists():
@@ -68,7 +77,7 @@ def voucher_registration(request):
 @api_view(['GET'])
 def info_and_balance(request):
     # 시연-------
-    user=User.objects.get(id='test')
+    user=User.objects.get(id='user')
     login(request,user)
     print(request.user)
     # -------------
@@ -114,3 +123,9 @@ def payment(request):
             return Response({"remain_cash":user.cash},status=status.HTTP_201_CREATED)
         else:
             return Response({"reason":"잔액 부족"},status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['GET'])
+def payment_info(request):
+    info=Payment_details.objects.filter(user=request.user).order_by('-time')
+    result=PaymentInfoSerializer(info).data
+    return Response(result,status=status.HTTP_200_OK)
