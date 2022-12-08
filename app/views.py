@@ -77,15 +77,45 @@ def voucher_registration(request):
 @api_view(['GET'])
 def info_and_balance(request):
     # 시연-------
+    if request.user.is_authenticated:
+        logout(request)
     user=User.objects.get(id='user')
     login(request,user)
     print(request.user)
     # -------------
     return Response({"balance":request.user.cash,"user":request.user.id},status=status.HTTP_200_OK)
 
+# --- 결제 정보
+@api_view(['GET'])
+def payment_info(request):
+    # 시연-------
+    if request.user.is_authenticated:
+        logout(request)
+    user=User.objects.get(id='user')
+    login(request,user)
+    print(request.user)
+    # -------------
+    info=Payment_details.objects.filter(user=request.user).order_by('-time')
+    result=PaymentInfoSerializer(info).data
+    return Response(result,status=status.HTTP_200_OK)
+
+
+
+
+
+
+
 #-------- 물품 가격 조회 --------
 @api_view(['GET'])
 def price_inquiry(request,id):
+    # 시연-------
+    if request.user.is_authenticated:
+        logout(request)
+    user=User.objects.get(id='gsseller')
+    login(request,user)
+    print(request.user)
+    # -------------
+
     product=Product.objects.get(id=id)
     result=ProductInfoSerializer(product).data
     return Response(result,status=status.HTTP_200_OK)
@@ -94,6 +124,13 @@ def price_inquiry(request,id):
 # 구매 불가능 물품 포함한지 체크하고, 잔액과 총 액 비교해서 결제 가능하면 결제 후 결제 내역 DB에 기록 남기기 까지
 @api_view(['PUT'])
 def payment(request):
+    # 시연-------
+    if request.user.is_authenticated:
+        logout(request)
+    user=User.objects.get(id='gsseller')
+    login(request,user)
+    print(request.user)
+    # -------------
     body=json.loads(request.body) # product_list:[], user_id:id
     flag=True
     price_sum=0
@@ -124,8 +161,3 @@ def payment(request):
         else:
             return Response({"reason":"잔액 부족"},status=status.HTTP_403_FORBIDDEN)
 
-@api_view(['GET'])
-def payment_info(request):
-    info=Payment_details.objects.filter(user=request.user).order_by('-time')
-    result=PaymentInfoSerializer(info).data
-    return Response(result,status=status.HTTP_200_OK)
