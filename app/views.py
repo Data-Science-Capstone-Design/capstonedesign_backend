@@ -14,12 +14,14 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenVerifyView
 import logging
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-
+from django.views.decorators.csrf import csrf_exempt
+ 
 User=get_user_model()
 
 # Create your views here.
 
 #------------- 회원가입 --------------
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def signup(request):
@@ -33,6 +35,7 @@ def signup(request):
 
 #------------- 프로필 업데이트 --------------
 @api_view(['PUT'])
+@csrf_exempt
 def update_profile(request):
     body=json.loads(request.body)
     
@@ -44,6 +47,7 @@ def update_profile(request):
     
 
 #------------- 사용자 바우처 등록 --------------
+@csrf_exempt
 @api_view(['PUT'])
 def voucher_registration(request):
     body=json.loads(request.body)
@@ -75,6 +79,7 @@ def voucher_registration(request):
 
 #-------------  내 잔액 --------------
 @api_view(['GET'])
+@csrf_exempt
 def info_and_balance(request):
     # 시연-------
     if request.user.is_authenticated:
@@ -87,6 +92,7 @@ def info_and_balance(request):
 
 # --- 결제 정보
 @api_view(['GET'])
+@csrf_exempt
 def payment_info(request):
     # 시연-------
     if request.user.is_authenticated:
@@ -96,7 +102,8 @@ def payment_info(request):
     print(request.user)
     # -------------
     info=Payment_details.objects.filter(user=request.user).order_by('-time')
-    result=PaymentInfoSerializer(info).data
+    result=PaymentInfoSerializer(info,many=True).data
+    print(result)
     return Response(result,status=status.HTTP_200_OK)
 
 
@@ -107,6 +114,7 @@ def payment_info(request):
 
 #-------- 물품 가격 조회 --------
 @api_view(['GET'])
+@csrf_exempt
 def price_inquiry(request,id):
     # 시연-------
     if request.user.is_authenticated:
@@ -123,6 +131,7 @@ def price_inquiry(request,id):
 #-------- 결제자 입장 : 결제 -------
 # 구매 불가능 물품 포함한지 체크하고, 잔액과 총 액 비교해서 결제 가능하면 결제 후 결제 내역 DB에 기록 남기기 까지
 @api_view(['PUT'])
+@csrf_exempt
 def payment(request):
     # 시연-------
     if request.user.is_authenticated:
