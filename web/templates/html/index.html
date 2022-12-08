@@ -79,7 +79,10 @@
               <a class="nav-link" href="{% url 'web:about' %}">Management</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{% url 'web:show_vouchers' %}">VIEW</a>
+              <a class="nav-link" href="{% url 'web:show_vouchers' %}">Voucher</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'web:show_payment_info' %}">Payment</a>
             </li>
           </ul>
         </div>
@@ -133,10 +136,13 @@
           <ul>
             <li><a href="{% url 'web:main' %}">Home</a></li>
             <li><a href="{% url 'web:about' %}">Management</a></li>
-            <li><a href="{% url 'web:show_vouchers' %}">VIEW</a></li>
-
+            <li><a href="{% url 'web:show_vouchers' %}">Voucher</a></li>
+            <li><a href="{% url 'web:show_payment_info' %}">Payment</a></li>
+            
             {% if user.is_authenticated %}
-            <a href="{% url 'web:logout' %}">로그아웃</a>
+            <li>
+              <a style="width=100%; height=100%;" href="{% url 'web:logout' %}"><button type="button" style="width=100%; height=100%;" class="account">logout</button></a>
+              </li>
             {% else %}
             <div style="display: flex; padding-left: 10px; margin-left: 20px">
               <form

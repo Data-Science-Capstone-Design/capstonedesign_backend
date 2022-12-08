@@ -76,7 +76,11 @@ def make_vouchers(request): # 겹치는거 기능 추가해야함
 
     return redirect('web:close')
 
-
+#-------------전체 결제 상태 조회 페이지 --------------
+def show_payment_info(request):
+    payments=Payment_details.objects.all().order_by('-time')
+    return render(request,'html/payment.html',{"payments":payments})
+    
 #------------- 쿠폰 상태 페이지 --------------
 def show_vouchers(request):
     vouchers=Voucher.objects.filter(issuer=request.user)
