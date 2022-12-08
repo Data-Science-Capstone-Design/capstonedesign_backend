@@ -20,7 +20,7 @@ import sys
 import hashlib
 import hmac
 import base64
-
+import json
 User=get_user_model()
 
 def main(request):
@@ -201,53 +201,50 @@ def send_sms(request):
 def close(request):
     return render(request,'close.html')
 
-def	make_signature(access,secret):
-    timestamp = int(time.time() * 1000)
-    timestamp = str(timestamp)
-    access_key = "{}".format(access)
-    secret_key = "{}".format(secret)
-    secret_key = bytes(secret_key, 'UTF-8')
-    method = "GET"
-    uri = "/photos/puppy.jpg?query1=&query2"
-    message = method + " " + uri + "\n" + timestamp + "\n"+ access_key
-    message = bytes(message, 'UTF-8')
-    signingKey = base64.b64encode(hmac.new(secret_key, message, digestmod=hashlib.sha256).digest())
-    return signingKey
-def make_signature(access,secret):
-    secret_key = bytes(secret, 'UTF-8')
-    access = bytes(access, 'UTF-8')
-    string_hmac = hmac.new(secret_key, access, digestmod=hashlib.sha256).digest()
-    string_base64 = base64.b64encode(string_hmac).decode('UTF-8')
-    return string_base64
 
 def sms(phone_num,pin_num):
-    phone_num=phone_num.replace("-","")
     SMS_ACCESS = getattr(settings, 'SMS_ACCESS', None)
     SMS_SECRET = getattr(settings, 'SMS_SECRET', None)
     SMS_SERVICE_ID = getattr(settings, 'SMS_SERVICE_ID', None)
     SEND_PHONE = getattr(settings, 'SEND_PHONE', None)
+    posturl='https://sens.apigw.ntruss.com/sms/v2/services/{}/messages'.format(SMS_SERVICE_ID)
+    
+    sms_uri = "/sms/v2/services/{}/messages".format(SMS_SERVICE_ID)
+    sms_url = "https://sens.apigw.ntruss.com{}".format(sms_uri)
+    sec_key = SMS_SERVICE_ID
+        
+    acc_key_id  = SMS_ACCESS
+    acc_sec_key = bytes(SMS_SECRET, 'UTF-8')
+        
+    stime = int(float(time.time()) * 1000)
+        
+    hash_str = "POST {}\n{}\n{}".format(sms_uri, stime, acc_key_id)
+        
+    digest = hmac.new(acc_sec_key, msg=hash_str.encode('utf-8'), digestmod=hashlib.sha256).digest()
+    d_hash = base64.b64encode(digest).decode()
 
-    headers={
-        'Content-Type': 'application/json; charset=utf-8',
-        'x-ncp-apigw-timestamp': str(int(time.time() * 1000)),
-        'x-ncp-iam-access-key': f'{SMS_ACCESS}',
-        'x-ncp-apigw-signature-v2':make_signature(SMS_ACCESS,SMS_SECRET)
+    phone_num=phone_num.replace("-","")
+    phone_num=int(phone_num)
+    msg_data = {
+    "type": "SMS",
+    "contentType": "COMM",
+    "from": str(SEND_PHONE),
+    "content": "[강남한끼]",
+    "messages": [
+        {
+            "to": phone_num,
+            "content": "바우처 번호 : {} \n 번호를 강남한끼에 등록해서 편의점에서 생필품을 구입해요!".format(pin_num)
+        }
+    ]
     }
-    print(headers)
-    data={
-        'type':'SMS',
-        'contentType':'COMM',
-        'countryCode':'82',
-        'from':f'{SEND_PHONE}',
-        'content':"[강남한끼]",
-        'messages':[
-            {
-                "to":f'{phone_num}',
-                'content':"바우처 번호 : {}\n 해당 바우처 번호를 등록하고 강남한끼를 통해 편의점에서 생필품을 구입해보아요!".format(pin_num),
-            }
-                
-            ],
-    }
-    print(data)
-    res=requests.post('https://sens.apigw.ntruss.com/sms/v2/services/{}/messages'.format(SMS_SERVICE_ID), headers=headers, json=data)
-    print(res.status_code)
+        
+    response = requests.post(
+        sms_url, data=json.dumps(msg_data),
+        headers={"Content-Type": "application/json; charset=utf-8",
+                "x-ncp-apigw-timestamp": str(stime),
+                "x-ncp-iam-access-key": acc_key_id,
+                "x-ncp-apigw-signature-v2": d_hash
+                }
+    )
+    print(response.status_code)
+    print(response.text)
